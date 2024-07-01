@@ -4,7 +4,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/vadim-ivlev/url-shortener/internal/urlshortener"
+	"github.com/vadim-ivlev/url-shortener/internal/shortener"
+	"github.com/vadim-ivlev/url-shortener/internal/storage"
 )
 
 // ShortenURLHandler обрабатывает POST-запросы для создания короткого URL.
@@ -22,9 +23,10 @@ func ShortenURLHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Сгенерировать короткий id и сохранить его
-	shortID := urlshortener.Us.Shorten(originalURL)
+	shortID := shortener.Shorten(originalURL)
+	savedID := storage.Set(shortID, originalURL)
 	// Сгенерировать короткий URL
-	shortURL := "http://localhost:8080/" + shortID
+	shortURL := "http://localhost:8080/" + savedID
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "text/plain")
@@ -40,7 +42,7 @@ func RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получить оригинальный URL и перенаправить
-	originalURL := urlshortener.Us.Expand(shortID)
+	originalURL := storage.Get(shortID)
 	if originalURL == "" {
 		http.Error(w, "URL not found", http.StatusBadRequest)
 		return
