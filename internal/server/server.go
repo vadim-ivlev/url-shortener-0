@@ -1,15 +1,19 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/vadim-ivlev/url-shortener/internal/handlers"
+)
 
 // addRouts добавляет обработчики маршрутов к мультиплексору.
 func addRouts(mux *http.ServeMux) {
 	// Зарегистрировать обработчики
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
-			ShortenURLHandler(w, r)
+			handlers.ShortenURLHandler(w, r)
 		} else if r.Method == http.MethodGet {
-			RedirectHandler(w, r)
+			handlers.RedirectHandler(w, r)
 		} else {
 			http.Error(w, "Invalid request method", http.StatusBadRequest)
 		}
