@@ -14,7 +14,6 @@ func addRouts(mux *http.ServeMux) {
 			http.Error(w, "Invalid request method", http.StatusBadRequest)
 		}
 	})
-
 }
 
 func Serve() {

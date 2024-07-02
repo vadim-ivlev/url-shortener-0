@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"fmt"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
@@ -57,10 +58,8 @@ func TestSet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Set(tt.args.key, tt.args.value)
-			fmt.Printf("Name = %v, Key = %v, Value = %v, Want = %v, Got = %v\n", tt.name, tt.args.key, tt.args.value, tt.want, got)
-			if got != tt.want {
-				t.Errorf("Set() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
+			// fmt.Printf("Name = %v, Key = %v, Value = %v, Want = %v, Got = %v\n", tt.name, tt.args.key, tt.args.value, tt.want, got)
 		})
 	}
 }
@@ -70,16 +69,11 @@ func TestGet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			got := Set(tt.args.key, tt.args.value)
-			// fmt.Printf("Name = %v, Key = %v, Value = %v, Want = %v, Got = %v\n", tt.name, tt.args.key, tt.args.value, tt.want, got)
-			if got != tt.want {
-				t.Errorf("Set() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 
 			gotValue := Get(tt.want)
-			fmt.Printf("Name = %v, PassedKey = %v, Wanted Value = %v, GotValue = %v\n", tt.name, tt.want, tt.args.value, gotValue)
-			if gotValue != tt.args.value {
-				t.Errorf("Get() = %v, want %v", gotValue, tt.args.value)
-			}
+			assert.Equal(t, tt.args.value, gotValue)
+			// fmt.Printf("Name = %v, PassedKey = %v, Wanted Value = %v, GotValue = %v\n", tt.name, tt.want, tt.args.value, gotValue)
 		})
 	}
 }

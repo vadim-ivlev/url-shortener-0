@@ -3,6 +3,8 @@ package shortener
 import (
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
@@ -36,11 +38,8 @@ func TestShorten(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotKey := Shorten(tt.args.value); gotKey != tt.wantKey {
-				t.Errorf("Shorten() = %v, want %v", gotKey, tt.wantKey)
-			} else {
-				t.Logf("Value = %v, Shorten() = %v, want %v", tt.args.value, gotKey, tt.wantKey)
-			}
+			gotKey := Shorten(tt.args.value)
+			assert.Equal(t, tt.wantKey, gotKey)
 		})
 	}
 }
