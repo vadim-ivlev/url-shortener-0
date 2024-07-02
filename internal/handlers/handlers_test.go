@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 type want struct {
 	postReturnCode int
 	getReturnCode  int
-	shortUrl       string
+	shortURL       string
 	contentType    string
 }
 
@@ -35,7 +35,7 @@ var tests = []struct {
 		want: want{
 			postReturnCode: http.StatusBadRequest,
 			getReturnCode:  http.StatusBadRequest,
-			shortUrl:       "Empty URL",
+			shortURL:       "Empty URL",
 			contentType:    "text/plain",
 		},
 	},
@@ -45,7 +45,7 @@ var tests = []struct {
 		want: want{
 			postReturnCode: http.StatusCreated,
 			getReturnCode:  http.StatusTemporaryRedirect,
-			shortUrl:       "http://localhost:8080/short1",
+			shortURL:       "http://localhost:8080/short1",
 			contentType:    "text/plain",
 		},
 	},
@@ -55,7 +55,7 @@ var tests = []struct {
 		want: want{
 			postReturnCode: http.StatusCreated,
 			getReturnCode:  http.StatusTemporaryRedirect,
-			shortUrl:       "http://localhost:8080/short2",
+			shortURL:       "http://localhost:8080/short2",
 			contentType:    "text/plain",
 		},
 	},
@@ -65,7 +65,7 @@ var tests = []struct {
 		want: want{
 			postReturnCode: http.StatusCreated,
 			getReturnCode:  http.StatusTemporaryRedirect,
-			shortUrl:       "http://localhost:8080/short1",
+			shortURL:       "http://localhost:8080/short1",
 			contentType:    "text/plain",
 		},
 	},
@@ -80,7 +80,7 @@ func TestShortenURLHandler(t *testing.T) {
 			ShortenURLHandler(rec, req)
 			// Проверка ответа
 			assert.Equal(t, tt.want.postReturnCode, rec.Code)
-			assert.Equal(t, tt.want.shortUrl, strings.TrimSpace(rec.Body.String()))
+			assert.Equal(t, tt.want.shortURL, strings.TrimSpace(rec.Body.String()))
 			assert.Contains(t, rec.Header().Get("Content-Type"), tt.want.contentType)
 
 		})
@@ -102,7 +102,7 @@ func TestRedirectHandler(t *testing.T) {
 	// Проверим перенаправление
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := getId(tt.want.shortUrl)
+			id := getID(tt.want.shortURL)
 			req := httptest.NewRequest(http.MethodGet, "/"+id, nil)
 			rec := httptest.NewRecorder()
 			// Вызов обработчика
@@ -117,7 +117,7 @@ func TestRedirectHandler(t *testing.T) {
 }
 
 // возвращает послледнюю часть URL (после 22 символа) или "" если URL короче
-func getId(url string) (id string) {
+func getID(url string) (id string) {
 	if len(url) > 22 {
 		id = url[22:]
 	}
