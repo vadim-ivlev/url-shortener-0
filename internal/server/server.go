@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vadim-ivlev/url-shortener/internal/handlers"
 )
 
@@ -29,6 +30,19 @@ func Serve() {
 
 	// Запустить сервер на порту 8080
 	err := http.ListenAndServe(":8080", mux)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Using Chi router
+func ServeChi() {
+	r := chi.NewRouter()
+
+	r.Post("/", handlers.ShortenURLHandler)
+	r.Get("/{id}", handlers.RedirectHandler)
+
+	err := http.ListenAndServe(":8080", r)
 	if err != nil {
 		panic(err)
 	}
