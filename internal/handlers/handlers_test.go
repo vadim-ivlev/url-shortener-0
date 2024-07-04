@@ -11,11 +11,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
+	"github.com/vadim-ivlev/url-shortener/internal/config"
 	"github.com/vadim-ivlev/url-shortener/internal/storage"
 )
 
 func TestMain(m *testing.M) {
+	config.ParseCommandLine()
 	storage.Create()
+	InitTestTable()
 	os.Exit(m.Run())
 }
 
@@ -26,51 +29,57 @@ type want struct {
 	contentType    string
 }
 
-var tests = []struct {
+type testTable = []struct {
 	name string
 	url  string
 	want want
-}{
-	{
-		name: "Empty",
-		url:  "",
-		want: want{
-			postReturnCode: http.StatusBadRequest,
-			getReturnCode:  http.StatusBadRequest,
-			shortURL:       "Empty URL",
-			contentType:    "text/plain",
+}
+
+var tests testTable
+
+func InitTestTable() {
+	tests = testTable{
+		{
+			name: "Empty",
+			url:  "",
+			want: want{
+				postReturnCode: http.StatusBadRequest,
+				getReturnCode:  http.StatusBadRequest,
+				shortURL:       "Empty URL",
+				contentType:    "text/plain",
+			},
 		},
-	},
-	{
-		name: "Google",
-		url:  "https://www.google.com",
-		want: want{
-			postReturnCode: http.StatusCreated,
-			getReturnCode:  http.StatusTemporaryRedirect,
-			shortURL:       "http://localhost:8080/short1",
-			contentType:    "text/plain",
+		{
+			name: "Google",
+			url:  "https://www.google.com",
+			want: want{
+				postReturnCode: http.StatusCreated,
+				getReturnCode:  http.StatusTemporaryRedirect,
+				shortURL:       config.BaseURL + "/short1",
+				contentType:    "text/plain",
+			},
 		},
-	},
-	{
-		name: "Youtube",
-		url:  "https://www.youtube.com",
-		want: want{
-			postReturnCode: http.StatusCreated,
-			getReturnCode:  http.StatusTemporaryRedirect,
-			shortURL:       "http://localhost:8080/short2",
-			contentType:    "text/plain",
+		{
+			name: "Youtube",
+			url:  "https://www.youtube.com",
+			want: want{
+				postReturnCode: http.StatusCreated,
+				getReturnCode:  http.StatusTemporaryRedirect,
+				shortURL:       config.BaseURL + "/short2",
+				contentType:    "text/plain",
+			},
 		},
-	},
-	{
-		name: "Google2",
-		url:  "https://www.google.com",
-		want: want{
-			postReturnCode: http.StatusCreated,
-			getReturnCode:  http.StatusTemporaryRedirect,
-			shortURL:       "http://localhost:8080/short1",
-			contentType:    "text/plain",
+		{
+			name: "Google2",
+			url:  "https://www.google.com",
+			want: want{
+				postReturnCode: http.StatusCreated,
+				getReturnCode:  http.StatusTemporaryRedirect,
+				shortURL:       config.BaseURL + "/short1",
+				contentType:    "text/plain",
+			},
 		},
-	},
+	}
 }
 
 func TestShortenURLHandler(t *testing.T) {
